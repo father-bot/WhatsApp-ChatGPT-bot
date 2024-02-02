@@ -18,22 +18,6 @@ export default class UserRepo {
         ])
     }
 
-    async setMessagesCounter(phone, n) {
-        await this.#db(this.#table)
-            .where({phone})
-            .update({
-                messages_left: n
-            })
-    }
-
-    async getMessagesCounter(phone) {
-        const queryResult = await this.#db(this.#table)
-            .where({phone})
-            .select('messages_left')
-
-        return queryResult[0].messages_left
-    }
-
     async setPersonality(phone, personality) {
         await this.#db(this.#table)
             .where({phone})
