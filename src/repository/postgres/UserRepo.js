@@ -12,9 +12,9 @@ export default class UserRepo {
         return rows !== 0
     }
     
-    async signUp(id, phone, messagesLeft) {
+    async signUp(id, phone) {
         await this.#db(this.#table).insert([
-            {id, phone, messages_left: messagesLeft}
+            {id, phone}
         ])
     }
 

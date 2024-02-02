@@ -100,8 +100,7 @@ async function processRequest(ctx, db, historyCache, openai) {
 
     if (!await db.users.checkExistence(msg.from)) {
         const id = uuidv4()
-        const freeMessages = 5
-        await db.users.signUp(id, msg.from, freeMessages)
+        await db.users.signUp(id, msg.from)
     }
 
     let buttonReplyID = ''
