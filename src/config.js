@@ -11,7 +11,7 @@ export default {
         host: 'localhost',
         port: 5432,
         user: getenv('POSTGRES_USER'),
-        database: 'postgres',
+        database: 'whatsapp_chatgpt_bot',
         password: getenv('POSTGRES_PASSWORD')
     },
     whatsapp: {
