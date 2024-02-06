@@ -4,102 +4,10 @@ import {v4 as uuidv4} from 'uuid'
 import OpenAI from 'openai'
 import WhatsAppAPI from 'whatsapp-api-js/middleware/node-http'
 import {NodeNext} from 'whatsapp-api-js/setup/node'
-import {
-    ActionButtons,
-    ActionList,
-    Body, Button,
-    Interactive,
-    ListSection,
-    Row,
-    Text
-} from 'whatsapp-api-js/messages'
+import {Text} from 'whatsapp-api-js/messages'
 import PostgresDAO from './repository/postgres/PostgresDAO.js'
-import personalities from './personalities.js'
 import config from './config.js'
-
-function handleChangePersonality(ctx, db) {
-    const msg = ctx.message
-    const personalityID = msg.interactive.list_reply.id
-        .split('#')[1]
-
-    db.users.setPersonality(msg.from, personalityID) // in background
-    ctx.reply(new Text('You have changed your bot role successfully'))
-}
-
-function handlePersonalitiesList(ctx) {
-    function sendPersonalitiesList(chunk, chunksCount) {
-        const message = new Interactive(
-            new ActionList(
-                'Click to assign',
-                new ListSection(
-                    undefined,
-                    ...chunk
-                )
-            ),
-            new Body(chunksCount === 0 ? 'You can assign one of these roles' : `Next ${chunk.length} roles`)
-        );
-        ctx.reply(message)
-    }
-
-    let currentChunk = []
-    let chunksCount = 0
-    personalities.iterate((personalityID, personality) => {
-        const row = new Row(`change_personality#${personalityID}`, personality.name)
-        currentChunk.push(row)
-
-        if (currentChunk.length === 10) {
-            sendPersonalitiesList(currentChunk, chunksCount)
-            currentChunk = []
-            chunksCount++
-        }
-    })
-
-    sendPersonalitiesList(currentChunk, chunksCount)
-}
-
-async function handleChatGPTMessage(ctx, db, openai) {
-	const msg = ctx.message
-
-	await db.messageHistory.append(msg.from, 'user', msg.text.body)
-	let history = (await db.messageHistory.getMessages(msg.from))
-		.map(message => ({role: message.role, content: message.message}))
-
-	if (history.length === 50) {
-		const messagesToDelete = 30
-		db.messageHistory.deleteFirst(msg.from, messagesToDelete) // in background
-	}
-
-	const personalityID = await db.users.getPersonality(msg.from)
-	if (personalityID) {
-		const personality = personalities[personalityID]
-		history = [
-			{role: 'system', content: personality.prompt},
-			...history
-		]
-	}
-
-	const chatCompletion = await openai.chat.completions.create({
-		messages: history,
-		model: 'gpt-4'
-	})
-
-	const answer = chatCompletion.choices[0].message.content
-	db.messageHistory.append(msg.from, 'assistant', answer) // in background
-
-	const message = new Interactive(
-		new ActionButtons(new Button('settings', 'Settings')),
-		new Body(answer)
-	)
-	ctx.reply(message)
-}
-
-function handleSettings(ctx) {
-    const message = new Interactive(
-        new ActionButtons(new Button('personalitiesList', 'Change role')),
-        new Body('What do you want to adjust?')
-    )
-    ctx.reply(message)
-}
+import handlers from "./handlers/index.js";
 
 async function processRequest(ctx, db, historyCache, openai) {
     const msg = ctx.message
@@ -121,15 +29,15 @@ async function processRequest(ctx, db, historyCache, openai) {
     }
 
     if (buttonReplyID === 'settings') {
-        return handleSettings(ctx)
+        return handlers.handleSettings(ctx)
     }
     if (buttonReplyID === 'personalitiesList') {
-        return handlePersonalitiesList(ctx)
+        return handlers.handlePersonalitiesList(ctx)
     }
     if (buttonListID.includes('change_personality')) {
-        return handleChangePersonality(ctx, db)
+        return handlers.handleChangePersonality(ctx, db)
     }
-    handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
+    handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
 }
 
 (async function main() {
