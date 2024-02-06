@@ -1,7 +1,8 @@
 import http from 'node:http'
+import url from 'node:url'
 import {v4 as uuidv4} from 'uuid'
 import OpenAI from 'openai'
-import WhatsAppAPI from 'whatsapp-api-js'
+import WhatsAppAPI from 'whatsapp-api-js/middleware/node-http'
 import {NodeNext} from 'whatsapp-api-js/setup/node'
 import {
     ActionButtons,
@@ -149,29 +150,22 @@ async function processRequest(ctx, db, historyCache, openai) {
     whatsapp.on.message = (ctx) =>
         processRequest(ctx, postgresDAO, historyCache, openai)
 
-    http.createServer((req, res) => {
-        if (req.url === '/whatsapp/webhook') {
-            if (req.method !== 'POST') {
-                res.writeHead(405 /*method not allowed*/)
-                return res.end()
-            }
-            const chunks = [];
-            req.on('data', (chunk) => chunks.push(chunk))
-
-            req.on('end', async () => {
-                const body = Buffer.concat(chunks).toString()
-
-                const status = await whatsapp.post(
-                    JSON.parse(body),
-                    body,
-                    req.headers['x-hub-signature-256']
-                )
-                res.writeHead(status)
-                res.end()
-            })
-            return
-        }
-        res.writeHead(404)
-        res.end()
+    http.createServer(async (req, res) => {
+		if (url.parse(req.url).pathname !== '/whatsapp/webhook') {
+			res.statusCode = 404
+			return res.end()
+		}
+		if (req.method === 'GET') {
+			try {
+				res.statusCode = 200
+				res.end(whatsapp.handle_get(req))
+			} catch (error) {
+				res.statusCode = error
+				res.end()
+			}
+			return
+		}
+		res.statusCode = await whatsapp.handle_post(req)
+		res.end()
     }).listen(configWhatsapp.webhookPort)
 })()
