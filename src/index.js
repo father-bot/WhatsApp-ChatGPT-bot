@@ -14,7 +14,6 @@ import {
     Text
 } from 'whatsapp-api-js/messages'
 import PostgresDAO from './repository/postgres/PostgresDAO.js'
-import newHistoryCache from './historyCache.js'
 import personalities from './personalities.js'
 import config from './config.js'
 
@@ -58,34 +57,40 @@ async function handlePersonalitiesList(ctx) {
     sendPersonalitiesList(currentChunk, chunksCount)
 }
 
-async function handleChatGPTMessage(ctx, db, historyCache, openai) {
-    const msg = ctx.message
+async function handleChatGPTMessage(ctx, db, openai) {
+	const msg = ctx.message
 
-    historyCache.push(msg.from, 'user', msg.text.body)
-    let history = historyCache.get(msg.from)
+	await db.messageHistory.append(msg.from, 'user', msg.text.body)
+	let history = (await db.messageHistory.getMessages(msg.from))
+		.map(message => ({role: message.role, content: message.message}))
 
-    const personalityID = await db.users.getPersonality(msg.from)
-    if (personalityID) {
-        const personality = personalities[personalityID]
-        history = [
-            {role: 'system', content: personality.prompt},
-            ...history
-        ]
-    }
+	if (history.length === 50) {
+		const messagesToDelete = 30
+		db.messageHistory.deleteFirst(msg.from, messagesToDelete) // in background
+	}
 
-    const chatCompletion = await openai.chat.completions.create({
-        messages: history,
-        model: 'gpt-4'
-    })
+	const personalityID = await db.users.getPersonality(msg.from)
+	if (personalityID) {
+		const personality = personalities[personalityID]
+		history = [
+			{role: 'system', content: personality.prompt},
+			...history
+		]
+	}
 
-    const answer = chatCompletion.choices[0].message.content
-    historyCache.push(msg.from, 'assistant', answer)
+	const chatCompletion = await openai.chat.completions.create({
+		messages: history,
+		model: 'gpt-4'
+	})
 
-    const message = new Interactive(
-        new ActionButtons(new Button('settings', 'Settings')),
-        new Body(answer)
-    )
-    ctx.reply(message)
+	const answer = chatCompletion.choices[0].message.content
+	db.messageHistory.append(msg.from, 'assistant', answer) // in background
+
+	const message = new Interactive(
+		new ActionButtons(new Button('settings', 'Settings')),
+		new Body(answer)
+	)
+	ctx.reply(message)
 }
 
 async function handleSettings(ctx) {
@@ -124,7 +129,7 @@ async function processRequest(ctx, db, historyCache, openai) {
     if (buttonListID.includes('change_personality')) {
         return handleChangePersonality(ctx, db)
     }
-    await handleChatGPTMessage(ctx, db, historyCache, openai)
+    await handleChatGPTMessage(ctx, db, openai)
 }
 
 (async function main() {
@@ -142,8 +147,6 @@ async function processRequest(ctx, db, historyCache, openai) {
         configPSQL.user,
         configPSQL.database,
         configPSQL.password)
-
-    const historyCache = newHistoryCache()
 
     const openai = new OpenAI({apiKey: config.openai.apiKey})
 
