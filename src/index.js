@@ -17,16 +17,16 @@ import PostgresDAO from './repository/postgres/PostgresDAO.js'
 import personalities from './personalities.js'
 import config from './config.js'
 
-async function handleChangePersonality(ctx, db) {
+function handleChangePersonality(ctx, db) {
     const msg = ctx.message
     const personalityID = msg.interactive.list_reply.id
         .split('#')[1]
 
-    await db.users.setPersonality(msg.from, personalityID)
+    db.users.setPersonality(msg.from, personalityID) // in background
     ctx.reply(new Text('You have changed your bot role successfully'))
 }
 
-async function handlePersonalitiesList(ctx) {
+function handlePersonalitiesList(ctx) {
     function sendPersonalitiesList(chunk, chunksCount) {
         const message = new Interactive(
             new ActionList(
@@ -93,7 +93,7 @@ async function handleChatGPTMessage(ctx, db, openai) {
 	ctx.reply(message)
 }
 
-async function handleSettings(ctx) {
+function handleSettings(ctx) {
     const message = new Interactive(
         new ActionButtons(new Button('personalitiesList', 'Change role')),
         new Body('What do you want to adjust?')
@@ -129,11 +129,15 @@ async function processRequest(ctx, db, historyCache, openai) {
     if (buttonListID.includes('change_personality')) {
         return handleChangePersonality(ctx, db)
     }
-    await handleChatGPTMessage(ctx, db, openai)
+    handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
 }
 
 (async function main() {
-    const configWhatsapp = config.whatsapp
+    process.on('unhandledRejection', (reason) => {
+		throw new Error(`Uncaught error in promise: ${reason}`)
+	})
+
+	const configWhatsapp = config.whatsapp
     const whatsapp = new WhatsAppAPI(NodeNext({
         token: configWhatsapp.apiKey,
         appSecret: configWhatsapp.appSecret,
