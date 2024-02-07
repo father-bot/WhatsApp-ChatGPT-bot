@@ -1,6 +1,6 @@
 import personalities from '../personalities.js'
 
-export default async function regenerateLastBotAnswer(ctx, db, openai) {
+export default async function handleRegenerateLastBotAnswer(ctx, db, openai) {
 	const msg = ctx.message
 
 	let history = []
