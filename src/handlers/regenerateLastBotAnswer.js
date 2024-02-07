@@ -10,16 +10,19 @@ export default async function regenerateLastBotAnswer(ctx, db, openai) {
 		history.push({role: 'system', content: personality.prompt})
 	}
 
-	const messages = (await db.messageHistory.getMessages(msg.from))
-		.map(messageObj => ({role: messageObj.role, content: messageObj.message}))
+	const messages = await db.messageHistory.getMessages(msg.from)
+	for (let i = messages.length-1; ; i--) {
+		const message = messages[i]
+		if (!message) return ctx.reply('There are no bot answers to regenerate')
 
-	const lastQuestion = messages.filter(messageObj => messageObj.role === 'user').pop()
-
-	for (let messageObj of messages) {
-		if (messageObj.content === lastQuestion.content) break
-		history.push(messageObj)
+		if (message.role === 'user') {
+			history.push(...messages
+				.slice(0, i+1)
+				.map(messageObj => ({role: messageObj.role, content: messageObj.message}))
+			)
+			break
+		}
 	}
-	history.push(lastQuestion)
 
 	const chatCompletion = await openai.chat.completions.create({
 		messages: history,
