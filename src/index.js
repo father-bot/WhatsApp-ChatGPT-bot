@@ -37,6 +37,9 @@ async function processRequest(ctx, db, historyCache, openai) {
     if (buttonListID.includes('change_personality')) {
         return handlers.handleChangePersonality(ctx, db)
     }
+	if (buttonReplyID === 'help') {
+		return handlers.handleHelp(ctx)
+	}
     handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
 }
 

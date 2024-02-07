@@ -31,7 +31,9 @@ export default async function handleChatGPTMessage(ctx, db, openai) {
 	db.messageHistory.append(msg.from, 'assistant', answer) // in background
 
 	const message = new Interactive(
-		new ActionButtons(new Button('settings', 'Settings')),
+		new ActionButtons(
+			new Button('settings', 'Settings'),
+			new Button('help', 'Help')),
 		new Body(answer)
 	)
 	ctx.reply(message)
