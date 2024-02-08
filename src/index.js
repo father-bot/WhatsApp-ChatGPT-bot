@@ -46,6 +46,9 @@ async function processRequest(ctx, db, historyCache, openai) {
 	if (msg.text.body === '/regen') {
 		return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
 	}
+	if (msg.text.body === '/clear') {
+		return handlers.handleClearMessageHistory(ctx, db)
+	}
     handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
 }
 
