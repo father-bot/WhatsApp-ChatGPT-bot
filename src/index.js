@@ -37,6 +37,9 @@ async function processRequest(ctx, db, historyCache, openai) {
     if (buttonListID.includes('change_personality')) {
         return handlers.handleChangePersonality(ctx, db)
     }
+	if (buttonReplyID === 'help') {
+		return handlers.handleHelp(ctx)
+	}
 	if (msg.text.body.includes('/image')) {
 		return handlers.handleGenerateImage(ctx, openai)
 	}
