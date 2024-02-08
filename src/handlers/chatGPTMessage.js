@@ -6,7 +6,7 @@ export default async function handleChatGPTMessage(ctx, db, openai) {
 
 	await db.messageHistory.append(msg.from, 'user', msg.text.body)
 	let history = (await db.messageHistory.getMessages(msg.from))
-		.map(message => ({role: message.role, content: message.message}))
+		.map(message => ({role: message.role, content: message.body}))
 
 	if (history.length === 50) {
 		const messagesToDelete = 30
