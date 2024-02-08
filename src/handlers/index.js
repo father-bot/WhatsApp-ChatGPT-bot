@@ -4,6 +4,7 @@ import handlePersonalitiesList from './personalitiesList.js'
 import handleSettings from './settings.js'
 import handleHelp from './help.js'
 import handleGenerateImage from './generateImage.js'
+import handleRegenerateLastBotAnswer from './regenerateLastBotAnswer.js'
 
 export default {
 	handleChatGPTMessage,
@@ -11,5 +12,6 @@ export default {
 	handlePersonalitiesList,
 	handleSettings,
 	handleHelp,
-	handleGenerateImage
+	handleGenerateImage,
+	handleRegenerateLastBotAnswer
 }

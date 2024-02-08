@@ -43,6 +43,9 @@ async function processRequest(ctx, db, historyCache, openai) {
 	if (msg.text.body.includes('/image')) {
 		return handlers.handleGenerateImage(ctx, openai)
 	}
+	if (msg.text.body === '/regen') {
+		return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
+	}
     handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
 }
 
