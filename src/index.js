@@ -9,7 +9,7 @@ import PostgresDAO from './repository/postgres/PostgresDAO.js'
 import config from './config.js'
 import handlers from "./handlers/index.js";
 
-async function processRequest(ctx, db, historyCache, openai) {
+async function processRequest(ctx, db, openai) {
     const msg = ctx.message
 
     if (!await db.users.checkExistence(msg.from)) {
@@ -75,7 +75,7 @@ async function processRequest(ctx, db, historyCache, openai) {
     const openai = new OpenAI({apiKey: config.openai.apiKey})
 
     whatsapp.on.message = (ctx) =>
-        processRequest(ctx, postgresDAO, historyCache, openai)
+        processRequest(ctx, postgresDAO, openai)
 
     http.createServer(async (req, res) => {
 		if (url.parse(req.url).pathname !== '/whatsapp/webhook') {
