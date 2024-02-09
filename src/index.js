@@ -15,6 +15,10 @@ async function processRequest(ctx, db, openai) {
         await db.users.signUp(msg.from)
     }
 
+	if (msg.type === 'audio') {
+		return handlers.handleTranscribeVoiceMessage(ctx, openai)
+	}
+
     let buttonReplyID = ''
     let buttonListID = ''
     if (msg.type === 'interactive') {
