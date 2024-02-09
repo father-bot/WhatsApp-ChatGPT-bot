@@ -13,8 +13,7 @@ async function processRequest(ctx, db, openai) {
     const msg = ctx.message
 
     if (!await db.users.checkExistence(msg.from)) {
-        const id = uuidv4()
-        await db.users.signUp(id, msg.from)
+        await db.users.signUp(msg.from)
     }
 
     let buttonReplyID = ''

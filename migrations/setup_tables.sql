@@ -1,5 +1,5 @@
 CREATE TABLE users(
-	id uuid PRIMARY KEY,
+	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	phone varchar(15) UNIQUE NOT NULL,
 	personality VARCHAR(35)
 );
