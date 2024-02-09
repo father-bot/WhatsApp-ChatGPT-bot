@@ -40,11 +40,11 @@ async function processRequest(ctx, db, openai) {
 	if (buttonReplyID === 'help') {
 		return handlers.handleHelp(ctx)
 	}
+	if (buttonReplyID === 'regenerateLastBotAnswer') {
+		return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
+	}
 	if (msg.text.body.includes('/image')) {
 		return handlers.handleGenerateImage(ctx, openai)
-	}
-	if (msg.text.body === '/regen') {
-		return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
 	}
 	if (msg.text.body === '/clear') {
 		return handlers.handleClearMessageHistory(ctx, db)

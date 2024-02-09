@@ -32,8 +32,9 @@ export default async function handleChatGPTMessage(ctx, db, openai) {
 
 	const message = new Interactive(
 		new ActionButtons(
-			new Button('settings', 'Settings'),
-			new Button('help', 'Help')),
+			new Button('regenerateLastBotAnswer', 'Retry'),
+			new Button('help', 'Help'),
+			new Button('settings', 'Settings')),
 		new Body(answer)
 	)
 	ctx.reply(message)
