@@ -15,43 +15,35 @@ async function processRequest(ctx, db, openai) {
         await db.users.signUp(msg.from)
     }
 
-	if (msg.type === 'audio') {
-		return handlers.handleTranscribeVoiceMessage(ctx, openai)
-	}
+	switch (msg.type) {
+		case 'audio':
+			handlers.handleTranscribeVoiceMessage(ctx, openai); break
+		case 'interactive':
+			const buttonReplyId = msg.interactive.type === 'button_reply' ?
+				msg.interactive.button_reply.id : ''
+			const buttonListId = msg.interactive.type === 'list_reply' ?
+				msg.interactive.list_reply.id : ''
 
-    let buttonReplyID = ''
-    let buttonListID = ''
-    if (msg.type === 'interactive') {
-        if (msg.interactive.type === 'button_reply') {
-            buttonReplyID = msg.interactive.button_reply.id
-        }
-        if (msg.interactive.type === 'list_reply') {
-            buttonListID = msg.interactive.list_reply.id
-        }
-    }
-
-    if (buttonReplyID === 'settings') {
-        return handlers.handleSettings(ctx)
-    }
-    if (buttonReplyID === 'personalitiesList') {
-        return handlers.handlePersonalitiesList(ctx)
-    }
-    if (buttonListID.includes('change_personality')) {
-        return handlers.handleChangePersonality(ctx, db)
-    }
-	if (buttonReplyID === 'help') {
-		return handlers.handleHelp(ctx)
+			if (buttonReplyId === 'settings')
+				handlers.handleSettings(ctx)
+			if (buttonReplyId === 'personalitiesList')
+				handlers.handlePersonalitiesList(ctx)
+			if (buttonReplyId === 'help')
+				handlers.handleHelp(ctx)
+			if (buttonReplyId === 'regenerateLastBotAnswer')
+				handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
+			if (buttonListId.includes('change_personality'))
+				handlers.handleChangePersonality(ctx, db)
+			break
+		case 'text':
+			const text = msg.text.body
+			if (text.includes('/image'))
+				handlers.handleGenerateImage(ctx, openai)
+			if (text === '/clear')
+				handlers.handleClearMessageHistory(ctx, db)
+			else
+				handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
 	}
-	if (buttonReplyID === 'regenerateLastBotAnswer') {
-		return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
-	}
-	if (msg.text.body.includes('/image')) {
-		return handlers.handleGenerateImage(ctx, openai)
-	}
-	if (msg.text.body === '/clear') {
-		return handlers.handleClearMessageHistory(ctx, db)
-	}
-    handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
 }
 
 (async function main() {
