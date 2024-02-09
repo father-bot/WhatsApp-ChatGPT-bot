@@ -1,6 +1,5 @@
 import http from 'node:http'
 import url from 'node:url'
-import {v4 as uuidv4} from 'uuid'
 import OpenAI from 'openai'
 import WhatsAppAPI from 'whatsapp-api-js/middleware/node-http'
 import {NodeNext} from 'whatsapp-api-js/setup/node'
