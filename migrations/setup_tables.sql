@@ -1,7 +1,7 @@
 CREATE TABLE users(
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	phone varchar(15) UNIQUE NOT NULL,
-	personality VARCHAR(35),
+	personality varchar(35),
 	ai_model varchar(35) DEFAULT 'chatgpt4'
 );
 
