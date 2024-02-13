@@ -7,6 +7,7 @@ import handleGenerateImage from './generateImage.js'
 import handleRegenerateLastBotAnswer from './regenerateLastBotAnswer.js'
 import handleClearMessageHistory from './clearMessageHistory.js'
 import handleTranscribeVoiceMessage from './transcribeVoiceMessage.js'
+import changeAIModel from './changeAIModel.js'
 import aiModelsList from './aiModelsList.js'
 
 export default {
@@ -19,5 +20,6 @@ export default {
 	handleRegenerateLastBotAnswer,
 	handleClearMessageHistory,
 	handleTranscribeVoiceMessage,
+	changeAIModel,
 	aiModelsList
 }
