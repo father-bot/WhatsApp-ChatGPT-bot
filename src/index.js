@@ -32,6 +32,8 @@ async function processRequest(ctx, db, openai) {
 				handlers.handleHelp(ctx)
 			if (buttonReplyId === 'regenerateLastBotAnswer')
 				handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
+			if (buttonReplyId === 'aiModelsList')
+				handlers.aiModelsList(ctx)
 			if (buttonListId.includes('change_personality'))
 				handlers.handleChangePersonality(ctx, db)
 			break

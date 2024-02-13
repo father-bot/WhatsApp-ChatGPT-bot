@@ -7,6 +7,7 @@ import handleGenerateImage from './generateImage.js'
 import handleRegenerateLastBotAnswer from './regenerateLastBotAnswer.js'
 import handleClearMessageHistory from './clearMessageHistory.js'
 import handleTranscribeVoiceMessage from './transcribeVoiceMessage.js'
+import aiModelsList from './aiModelsList.js'
 
 export default {
 	handleChatGPTMessage,
@@ -17,5 +18,6 @@ export default {
 	handleGenerateImage,
 	handleRegenerateLastBotAnswer,
 	handleClearMessageHistory,
-	handleTranscribeVoiceMessage
+	handleTranscribeVoiceMessage,
+	aiModelsList
 }
