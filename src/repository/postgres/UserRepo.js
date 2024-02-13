@@ -37,4 +37,12 @@ export default class UserRepo {
             .where({phone})
             .update({ai_model: model})
     }
+
+    async getAIModel(phone) {
+        const queryResult = await this.#db(this.#table)
+            .where({phone})
+            .select('ai_model')
+
+        return queryResult[0].ai_model
+    }
 }
