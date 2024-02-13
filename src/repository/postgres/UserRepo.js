@@ -31,4 +31,10 @@ export default class UserRepo {
 
         return queryResult[0].personality
     }
+
+    async setAIModel(phone, model) {
+        await this.#db(this.#table)
+            .where({phone})
+            .update({ai_model: model})
+    }
 }
