@@ -2,7 +2,7 @@ import http from 'node:http'
 import url from 'node:url'
 import OpenAI from 'openai'
 import WhatsAppAPI from 'whatsapp-api-js/middleware/node-http'
-import {NodeNext} from 'whatsapp-api-js/setup/node'
+import {Node18} from 'whatsapp-api-js/setup/node'
 import {Text} from 'whatsapp-api-js/messages'
 import PostgresDAO from './repository/postgres/PostgresDAO.js'
 import config from './config.js'
@@ -56,7 +56,7 @@ async function processRequest(ctx, db, openai) {
 	})
 
 	const configWhatsapp = config.whatsapp
-    const whatsapp = new WhatsAppAPI(NodeNext({
+    const whatsapp = new WhatsAppAPI(Node18({
         token: configWhatsapp.apiKey,
         appSecret: configWhatsapp.appSecret,
         webhookVerifyToken: configWhatsapp.webhookVerifyToken
