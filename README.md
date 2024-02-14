@@ -6,7 +6,7 @@
 
 2. Buy a domain, set up SSL on your server
 
-3. Create a Webhook application on Meta developers, adjust it properly to use with WhatsApp (read [docs](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks/)). Use https://{Paste your domain here}/whatsapp/webhook as the webhook url
+3. Create a Webhook application on Meta developers, adjust it properly to use with WhatsApp (read [docs](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks/)). Use ```https://{Paste your domain here}/whatsapp/webhook``` as the webhook url
 
 4. Issue your OpenAI access token
 
