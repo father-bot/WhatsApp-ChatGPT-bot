@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: whatsapp-chatgpt-bot-postgres
+    image: postgres:16.2
+    environment:
+      POSTGRES_DB: whatsapp_chatgpt_bot
+      POSTGRES_USER: whatsapp_admin
+      POSTGRES_PASSWORD: JAMgTR92EtCpuGnZ
+    volumes:
+      - postgres-database:/var/lib/postgresql/data
+      - ./migrations/setup_tables.sql:/docker-entrypoint-initdb.d/up.sql
+    networks:
+      - whatsapp-chatgpt-bot-network 
+  app:
+    container_name: whatsapp-chatgpt-bot
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=whatsapp_admin
+      - POSTGRES_PASSWORD=JAMgTR92EtCpuGnZ
+      - POSTGRES_DATABASE=whatsapp_chatgpt_bot
+
+      - WHATSAPP_APP_SECRET=$APP_SECRET
+      - WHATSAPP_API_KEY=$API_KEY
+      - WHATSAPP_WEBHOOK_VERIFY_TOKEN=$WEBHOOK_VERIFY_TOKEN
+      - WHATSAPP_WEBHOOK_PORT=8080
+
+      - OPEN_AI_API_KEY=$OPEN_AI_API_KEY
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    networks:
+      - whatsapp-chatgpt-bot-network
+networks:
+  whatsapp-chatgpt-bot-network: 
+    driver: bridge
+volumes:
+  postgres-database:
+    driver: local
