@@ -1,4 +1,4 @@
-import {Text} from "whatsapp-api-js/messages"
+import {Text} from 'whatsapp-api-js/messages'
 
 export default function changeAIModel(ctx, db) {
     const msg = ctx.message

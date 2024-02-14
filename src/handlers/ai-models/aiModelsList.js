@@ -1,4 +1,4 @@
-import { ActionButtons, Body, Button, Interactive } from "whatsapp-api-js/messages"
+import {ActionButtons, Body, Button, Interactive} from 'whatsapp-api-js/messages'
 
 export default function aiModelsList(ctx) {
     const message = new Interactive(

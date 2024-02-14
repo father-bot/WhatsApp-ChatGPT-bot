@@ -6,7 +6,7 @@ import {Node18} from 'whatsapp-api-js/setup/node'
 import {Text} from 'whatsapp-api-js/messages'
 import PostgresDAO from './repository/postgres/PostgresDAO.js'
 import config from './config.js'
-import handlers from "./handlers/index.js";
+import handlers from './handlers/index.js'
 
 async function processRequest(ctx, db, openai) {
     const msg = ctx.message

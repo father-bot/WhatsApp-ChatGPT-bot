@@ -1,6 +1,6 @@
 import KnexDAO from '../KnexDAO.js'
 import UserRepo from './UserRepo.js'
-import MessageHistoryRepo from "./MessageHistoryRepo.js";
+import MessageHistoryRepo from './MessageHistoryRepo.js'
 
 export default class PostgresDAO extends KnexDAO {
     constructor(host, port, user, database, password) {
