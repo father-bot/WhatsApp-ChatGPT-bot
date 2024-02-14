@@ -1,5 +1,5 @@
 import {ActionList, Body, Interactive, ListSection, Row} from 'whatsapp-api-js/messages'
-import personalities from '../personalities.js'
+import personalities from '../../personalities.js'
 
 export default function handlePersonalitiesList(ctx) {
 	function sendPersonalitiesList(chunk, chunksCount) {

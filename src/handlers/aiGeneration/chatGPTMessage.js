@@ -1,4 +1,4 @@
-import personalities from '../personalities.js'
+import personalities from '../../personalities.js'
 import {ActionButtons, Body, Button, Interactive} from 'whatsapp-api-js/messages'
 
 export default async function handleChatGPTMessage(ctx, db, openai) {

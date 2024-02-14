@@ -1,5 +1,5 @@
 import {Text} from 'whatsapp-api-js/messages'
-import personalities from '../personalities.js'
+import personalities from '../../personalities.js'
 
 export default async function handleRegenerateLastBotAnswer(ctx, db, openai) {
 	const msg = ctx.message
