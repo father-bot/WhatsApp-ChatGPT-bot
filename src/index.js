@@ -43,7 +43,7 @@ async function processRequest(ctx, db, openai) {
 			const text = msg.text.body
 			if (text.includes('/image'))
 				handlers.handleGenerateImage(ctx, openai)
-			if (text === '/clear')
+			else if (text === '/clear')
 				handlers.handleClearMessageHistory(ctx, db)
 			else
 				handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
