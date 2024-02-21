@@ -3,7 +3,6 @@ import url from 'node:url'
 import OpenAI from 'openai'
 import WhatsAppAPI from 'whatsapp-api-js/middleware/node-http'
 import {Node18} from 'whatsapp-api-js/setup/node'
-import {Text} from 'whatsapp-api-js/messages'
 import PostgresDAO from './repository/postgres/PostgresDAO.js'
 import config from './config.js'
 import handlers from './handlers/index.js'
@@ -36,7 +35,7 @@ async function processRequest(ctx, db, openai) {
 				handlers.aiModelsList(ctx)
 			if (buttonReplyId.includes('changeAIModel'))
 				handlers.changeAIModel(ctx, db)
-			if (buttonListId.includes('change_personality'))
+			if (buttonListId.includes('changePersonality'))
 				handlers.handleChangePersonality(ctx, db)
 			break
 		case 'text':

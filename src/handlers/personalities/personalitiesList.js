@@ -19,7 +19,7 @@ export default function handlePersonalitiesList(ctx) {
 	let currentChunk = []
 	let chunksCount = 0
 	personalities.iterate((personalityID, personality) => {
-		const row = new Row(`change_personality#${personalityID}`, personality.name)
+		const row = new Row(`changePersonality#${personalityID}`, personality.name)
 		currentChunk.push(row)
 
 		if (currentChunk.length === 10) {
