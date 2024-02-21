@@ -1,7 +1,7 @@
 function getenv(name) {
     const value = process.env[name]
     if (!value) {
-        throw new Error(`unexpected value '${value}' was got while reading '${name}' environment variable`)
+        throw new Error(`got unexpected value '${value}' while reading '${name}' environment variable`)
     }
     return value
 }
