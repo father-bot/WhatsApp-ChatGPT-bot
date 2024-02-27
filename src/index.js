@@ -1,11 +1,9 @@
-import http from 'node:http'
-import url from 'node:url'
 import OpenAI from 'openai'
-import WhatsAppAPI from 'whatsapp-api-js/middleware/node-http'
-import {Node18} from 'whatsapp-api-js/setup/node'
+import {makeWASocket,useMultiFileAuthState,DisconnectReason} from '@whiskeysockets/baileys'
 import PostgresDAO from './repository/postgres/PostgresDAO.js'
 import config from './config.js'
-import handlers from './handlers/index.js'
+// it's not ported to baileys yet
+// import handlers from './handlers/index.js'
 
 async function processRequest(ctx, db, openai) {
     const msg = ctx.message
@@ -54,13 +52,6 @@ async function processRequest(ctx, db, openai) {
 		throw new Error(`Uncaught error in promise: ${reason}`)
 	})
 
-	const configWhatsapp = config.whatsapp
-    const whatsapp = new WhatsAppAPI(Node18({
-        token: configWhatsapp.apiKey,
-        appSecret: configWhatsapp.appSecret,
-        webhookVerifyToken: configWhatsapp.webhookVerifyToken
-    }));
-
     const configPSQL = config.postgres
     const postgresDAO = new PostgresDAO(
         configPSQL.host,
@@ -71,25 +62,21 @@ async function processRequest(ctx, db, openai) {
 
     const openai = new OpenAI({apiKey: config.openai.apiKey})
 
-    whatsapp.on.message = (ctx) =>
-        processRequest(ctx, postgresDAO, openai)
+	const connectToWhatsapp = async () => {
+        const {state, saveCreds} = await useMultiFileAuthState('/whatsapp-session')
 
-    http.createServer(async (req, res) => {
-		if (url.parse(req.url).pathname !== '/whatsapp/webhook') {
-			res.statusCode = 404
-			return res.end()
-		}
-		if (req.method === 'GET') {
-			try {
-				res.statusCode = 200
-				res.end(whatsapp.handle_get(req))
-			} catch (error) {
-				res.statusCode = error
-				res.end()
+		const sock = makeWASocket({
+			printQRInTerminal: true,
+			auth: state
+		})
+		sock.ev.on('creds.update', saveCreds)
+		sock.ev.on('connection.update', update => {
+			const {connection, lastDisconnect} = update
+			if (connection === 'close') {
+				const shouldReconnect = lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut
+				if (shouldReconnect) connectToWhatsapp()
 			}
-			return
-		}
-		res.statusCode = await whatsapp.handle_post(req)
-		res.end()
-    }).listen(configWhatsapp.webhookPort)
+		})
+	}
+	connectToWhatsapp()
 })()
