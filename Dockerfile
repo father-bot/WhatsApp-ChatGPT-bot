@@ -4,6 +4,6 @@ WORKDIR /whatsapp-chatgpt-bot
 COPY ./src .
 COPY ./package.json .
 
-RUN npm install
+RUN apk add git; npm install
 
 CMD [ "./index.js" ]
