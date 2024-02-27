@@ -30,6 +30,8 @@ services:
     build: .
     depends_on:
       - postgres
+    volumes:
+      - whatsapp-chatgpt-bot-session:/whatsapp-session
     ports:
       - 8080:8080
     networks:
@@ -39,4 +41,6 @@ networks:
     driver: bridge
 volumes:
   postgres-database:
+    driver: local
+  whatsapp-chatgpt-bot-session:
     driver: local
