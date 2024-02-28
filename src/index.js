@@ -19,6 +19,8 @@ async function processRequest(ctx, db, openai) {
 			return handlers.handleHelp(ctx)
 		case '/clear':
 			return handlers.handleClearMessageHistory(ctx, db)
+		case '/retry':
+			return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
 		default:
 			handlers.handleChatGPTMessage(ctx, db, openai)
 	}	
