@@ -12,6 +12,9 @@ async function processRequest(ctx, db, openai) {
         await db.users.signUp(messageObj.key.remoteJid)
     }
 
+	const text = messageObj.message.conversation
+	if (text === '/clear') return handlers.handleClearMessageHistory(ctx, db)
+
 	handlers.handleChatGPTMessage(ctx, db, openai)
 }
 
