@@ -29,26 +29,9 @@ export default async function handleChatGPTMessage({sock, messageEvent}, db, ope
 	const answer = chatCompletion.choices[0].message.content
 	db.messageHistory.append(remoteJid, 'assistant', answer) // in background
 
-	const buttons = [
-		{
-			quickReplyButton: {
-				displayText: 'Retry', id: 'regenerateLastBotAnswer'
-			}
-		},
-		{
-			quickReplyButton: {
-				displayText: 'Help', id: 'help'
-			}
-		},
-		{
-			quickReplyButton: {
-				displayText: 'Settings', id: 'settings'
-			}
-		}
-	]
-
     sock.sendMessage(remoteJid, {
-		text: answer,
-		templateButtons: buttons
+		text: `${answer}
+---
+type /help to get a list of available commands`
 	})
 }

@@ -12,17 +12,16 @@ async function processRequest(ctx, db, openai) {
         await db.users.signUp(messageEvent.key.remoteJid)
     }
 
-	const replyButton = messageEvent.message.templateButtonReplyMessage
-	if (replyButton) {
-		const replyButtonId = replyButton.selectedId
-		if (replyButtonId === 'help') handlers.handleHelp(ctx)
-		return
-	}
-
 	const text = messageEvent.message.conversation
-	if (text === '/clear') return handlers.handleClearMessageHistory(ctx, db)
 
-	handlers.handleChatGPTMessage(ctx, db, openai)
+	switch(text) {
+		case '/help':
+			return handlers.handleHelp(ctx)
+		case '/clear':
+			return handlers.handleClearMessageHistory(ctx, db)
+		default:
+			handlers.handleChatGPTMessage(ctx, db, openai)
+	}	
 }
 
 (async function main() {
