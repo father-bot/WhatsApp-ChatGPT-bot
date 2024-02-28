@@ -14,6 +14,9 @@ async function processRequest(ctx, db, openai) {
 
 	const text = messageEvent.message.conversation
 
+	if (text.includes('/role ')) 
+		return handlers.handleChangePersonality(ctx, db)
+
 	switch(text) {
 		case '/help':
 			return handlers.handleHelp(ctx)
