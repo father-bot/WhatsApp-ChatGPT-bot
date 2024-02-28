@@ -4,7 +4,9 @@ export default function handleHelp({sock, messageEvent}) {
 /image $prompt — generates an image based on your prompt
 example: /image sunrise low dim sun a new winter day
 
-/retry — regenerates the last ChatGPT bot answer (once it's done the answer will be sent to the dialog)`
+/retry — regenerates the last ChatGPT bot answer (once it's done the answer will be sent to the dialog)
+
+/roles — list of available roles to assign one (chatGPT may be a developer or a doctor and based on this the answers will be different)`
 
 	sock.sendMessage(messageEvent.key.remoteJid, {
 		text: message

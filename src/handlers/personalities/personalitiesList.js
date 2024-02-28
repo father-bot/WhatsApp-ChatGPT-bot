@@ -1,33 +1,12 @@
-import {ActionList, Body, Interactive, ListSection, Row} from 'whatsapp-api-js/messages'
 import personalities from '../../personalities.js'
 
-export default function handlePersonalitiesList(ctx) {
-	function sendPersonalitiesList(chunk, chunksCount) {
-		const message = new Interactive(
-			new ActionList(
-				'Click to assign',
-				new ListSection(
-					undefined,
-					...chunk
-				)
-			),
-			new Body(chunksCount === 0 ? 'You can assign one of these roles' : `Next ${chunk.length} roles`)
-		);
-		ctx.reply(message)
-	}
-
-	let currentChunk = []
-	let chunksCount = 0
+export default function handlePersonalitiesList({sock, messageEvent}) {
+	let message = 'Type one of these commands to set a role:\n\n'
 	personalities.iterate((personalityID, personality) => {
-		const row = new Row(`changePersonality#${personalityID}`, personality.name)
-		currentChunk.push(row)
+		message += `/role ${personality.name}\n`
+	});
 
-		if (currentChunk.length === 10) {
-			sendPersonalitiesList(currentChunk, chunksCount)
-			currentChunk = []
-			chunksCount++
-		}
+	sock.sendMessage(messageEvent.key.remoteJid, {
+		text: message
 	})
-
-	sendPersonalitiesList(currentChunk, chunksCount)
 }
