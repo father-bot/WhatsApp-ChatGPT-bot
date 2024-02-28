@@ -2,49 +2,17 @@ import OpenAI from 'openai'
 import {makeWASocket,useMultiFileAuthState,DisconnectReason} from '@whiskeysockets/baileys'
 import PostgresDAO from './repository/postgres/PostgresDAO.js'
 import config from './config.js'
-// it's not ported to baileys yet
-// import handlers from './handlers/index.js'
+import handlers from './handlers/index.js'
 
 async function processRequest(ctx, db, openai) {
-    const msg = ctx.message
-
-    if (!await db.users.checkExistence(msg.from)) {
-        await db.users.signUp(msg.from)
+	const {messageObj} = ctx
+    if (messageObj.key.fromMe) return
+	
+	if (!await db.users.checkExistence(messageObj.key.remoteJid)) {
+        await db.users.signUp(messageObj.key.remoteJid)
     }
 
-	switch (msg.type) {
-		case 'audio':
-			handlers.handleTranscribeVoiceMessage(ctx, openai); break
-		case 'interactive':
-			const buttonReplyId = msg.interactive.type === 'button_reply' ?
-				msg.interactive.button_reply.id : ''
-			const buttonListId = msg.interactive.type === 'list_reply' ?
-				msg.interactive.list_reply.id : ''
-
-			if (buttonReplyId === 'settings')
-				handlers.handleSettings(ctx)
-			if (buttonReplyId === 'personalitiesList')
-				handlers.handlePersonalitiesList(ctx)
-			if (buttonReplyId === 'help')
-				handlers.handleHelp(ctx)
-			if (buttonReplyId === 'regenerateLastBotAnswer')
-				handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
-			if (buttonReplyId === 'aiModelsList')
-				handlers.aiModelsList(ctx)
-			if (buttonReplyId.includes('changeAIModel'))
-				handlers.changeAIModel(ctx, db)
-			if (buttonListId.includes('changePersonality'))
-				handlers.handleChangePersonality(ctx, db)
-			break
-		case 'text':
-			const text = msg.text.body
-			if (text.includes('/image'))
-				handlers.handleGenerateImage(ctx, openai)
-			else if (text === '/clear')
-				handlers.handleClearMessageHistory(ctx, db)
-			else
-				handlers.handleChatGPTMessage(ctx, db, openai) // in background as the top async calls
-	}
+	handlers.handleChatGPTMessage(ctx, db, openai)
 }
 
 (async function main() {
@@ -76,6 +44,10 @@ async function processRequest(ctx, db, openai) {
 				const shouldReconnect = lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut
 				if (shouldReconnect) connectToWhatsapp()
 			}
+		})
+		sock.ev.on('messages.upsert', msg => {
+			const ctx = {sock, messageObj: msg.messages[0]}
+			processRequest(ctx, postgresDAO, openai)
 		})
 	}
 	connectToWhatsapp()

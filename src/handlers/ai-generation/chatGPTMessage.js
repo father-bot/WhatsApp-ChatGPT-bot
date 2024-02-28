@@ -1,11 +1,10 @@
 import personalities from '../../personalities.js'
-import {ActionButtons, Body, Button, Interactive} from 'whatsapp-api-js/messages'
 
-export default async function handleChatGPTMessage(ctx, db, openai) {
-	const msg = ctx.message
+export default async function handleChatGPTMessage({sock, messageObj}, db, openai) {
+	const remoteJid = messageObj.key.remoteJid
+	await db.messageHistory.append(remoteJid, 'user', messageObj.message.conversation)
 
-	await db.messageHistory.append(msg.from, 'user', msg.text.body)
-	let history = (await db.messageHistory.getMessages(msg.from))
+	let history = (await db.messageHistory.getMessages(remoteJid))
 		.map(message => ({role: message.role, content: message.body}))
 
 	if (history.length === 50) {
@@ -13,7 +12,7 @@ export default async function handleChatGPTMessage(ctx, db, openai) {
 		db.messageHistory.deleteFirst(msg.from, messagesToDelete) // in background
 	}
 
-	const personalityID = await db.users.getPersonality(msg.from)
+	const personalityID = await db.users.getPersonality(remoteJid)
 	if (personalityID) {
 		const personality = personalities[personalityID]
 		history = [
@@ -28,14 +27,26 @@ export default async function handleChatGPTMessage(ctx, db, openai) {
 	})
 
 	const answer = chatCompletion.choices[0].message.content
-	db.messageHistory.append(msg.from, 'assistant', answer) // in background
+	db.messageHistory.append(remoteJid, 'assistant', answer) // in background
 
-	const message = new Interactive(
-		new ActionButtons(
-			new Button('regenerateLastBotAnswer', 'Retry'),
-			new Button('help', 'Help'),
-			new Button('settings', 'Settings')),
-		new Body(answer)
-	)
-	ctx.reply(message)
+    sock.sendMessage(remoteJid, {
+		text: answer,
+		templateButtons: [
+			{
+				quickReplyButton: {
+					displayText: 'Retry', id: 'regenerateLastBotAnswer'
+				}
+			},
+			{
+				quickReplyButton: {
+					displayText: 'Help', id: 'help'
+				}
+			},
+			{
+				quickReplyButton: {
+					displayText: 'Settings', id: 'settings'
+				}
+			}
+		]
+	})
 }
