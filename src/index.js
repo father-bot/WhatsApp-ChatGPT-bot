@@ -5,21 +5,21 @@ import config from './config.js'
 import handlers from './handlers/index.js'
 
 async function processRequest(ctx, db, openai) {
-	const {messageObj} = ctx
-    if (messageObj.key.fromMe) return
+	const {messageEvent} = ctx
+    if (messageEvent.key.fromMe) return
 	
-	if (!await db.users.checkExistence(messageObj.key.remoteJid)) {
-        await db.users.signUp(messageObj.key.remoteJid)
+	if (!await db.users.checkExistence(messageEvent.key.remoteJid)) {
+        await db.users.signUp(messageEvent.key.remoteJid)
     }
 
-	const replyButton = messageObj.message.templateButtonReplyMessage
+	const replyButton = messageEvent.message.templateButtonReplyMessage
 	if (replyButton) {
 		const replyButtonId = replyButton.selectedId
 		if (replyButtonId === 'help') handlers.handleHelp(ctx)
 		return
 	}
 
-	const text = messageObj.message.conversation
+	const text = messageEvent.message.conversation
 	if (text === '/clear') return handlers.handleClearMessageHistory(ctx, db)
 
 	handlers.handleChatGPTMessage(ctx, db, openai)
@@ -56,7 +56,7 @@ async function processRequest(ctx, db, openai) {
 			}
 		})
 		sock.ev.on('messages.upsert', msg => {
-			const ctx = {sock, messageObj: msg.messages[0]}
+			const ctx = {sock, messageEvent: msg.messages[0]}
 			processRequest(ctx, postgresDAO, openai)
 		})
 	}

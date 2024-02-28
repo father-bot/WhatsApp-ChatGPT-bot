@@ -1,5 +1,5 @@
-export default function handleClearMessageHistory({sock, messageObj}, db) {
-	const remoteJid = messageObj.key.remoteJid
+export default function handleClearMessageHistory({sock, messageEvent}, db) {
+	const remoteJid = messageEvent.key.remoteJid
 	db.messageHistory.clear(remoteJid) // in background
 
 	sock.sendMessage(remoteJid, {

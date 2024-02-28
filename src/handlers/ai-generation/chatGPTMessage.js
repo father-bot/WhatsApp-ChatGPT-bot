@@ -1,8 +1,8 @@
 import personalities from '../../personalities.js'
 
-export default async function handleChatGPTMessage({sock, messageObj}, db, openai) {
-	const remoteJid = messageObj.key.remoteJid
-	await db.messageHistory.append(remoteJid, 'user', messageObj.message.conversation)
+export default async function handleChatGPTMessage({sock, messageEvent}, db, openai) {
+	const remoteJid = messageEvent.key.remoteJid
+	await db.messageHistory.append(remoteJid, 'user', messageEvent.message.conversation)
 
 	let history = (await db.messageHistory.getMessages(remoteJid))
 		.map(message => ({role: message.role, content: message.body}))
