@@ -12,6 +12,13 @@ async function processRequest(ctx, db, openai) {
         await db.users.signUp(messageObj.key.remoteJid)
     }
 
+	const replyButton = messageObj.message.templateButtonReplyMessage
+	if (replyButton) {
+		const replyButtonId = replyButton.selectedId
+		if (replyButtonId === 'help') handlers.handleHelp(ctx)
+		return
+	}
+
 	const text = messageObj.message.conversation
 	if (text === '/clear') return handlers.handleClearMessageHistory(ctx, db)
 
