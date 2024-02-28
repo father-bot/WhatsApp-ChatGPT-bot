@@ -1,6 +1,5 @@
 function getenv(name) {
     const value = process.env[name]
-    console.log(`${name} ${value}`)
     if (typeof value === 'undefined') {
         throw new Error(`got unexpected value '${value}' while reading '${name}' environment variable`)
     }
