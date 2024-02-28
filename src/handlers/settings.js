@@ -1,12 +1,24 @@
-import {ActionButtons, Body, Button, Interactive} from 'whatsapp-api-js/messages'
+export default function handleSettings({sock, messageEvent}) {
+	const buttons = [
+		{
+			quickReplyButton: {
+				displayText: 'Change role', id: 'personalitiesList'
+			}
+		},
+		{
+			quickReplyButton: {
+				displayText: 'Change AI model', id: 'aiModelsList'
+			}
+		},
+		{
+			quickReplyButton: {
+				displayText: 'Settings', id: 'settings'
+			}
+		}
+	]
 
-export default function handleSettings(ctx) {
-	const message = new Interactive(
-		new ActionButtons(
-			new Button('personalitiesList', 'Change role'),
-			new Button('aiModelsList', 'Change AI model')
-		),
-		new Body('What do you want to adjust?')
-	)
-	ctx.reply(message)
+	sock.sendMessage(messageEvent.key.remoteJid, {
+		text: 'What do you want to adjust?',
+		templateButtons: buttons
+	})
 }

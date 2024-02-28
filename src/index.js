@@ -16,6 +16,7 @@ async function processRequest(ctx, db, openai) {
 	if (replyButton) {
 		const replyButtonId = replyButton.selectedId
 		if (replyButtonId === 'help') handlers.handleHelp(ctx)
+		if (replyButtonId === 'settings') handlers.handleSettings(ctx)
 		return
 	}
 
