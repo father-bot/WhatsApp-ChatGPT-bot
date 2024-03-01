@@ -32,8 +32,6 @@ services:
       - postgres
     volumes:
       - whatsapp-chatgpt-bot-session:/whatsapp-session
-    ports:
-      - 8080:8080
     networks:
       - whatsapp-chatgpt-bot-network
 networks:
