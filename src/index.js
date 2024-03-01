@@ -28,6 +28,8 @@ async function processRequest(ctx, db, openai) {
 			return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
 		case '/roles':
 			return handlers.handlePersonalitiesList(ctx)
+		case '/models':
+			return handlers.aiModelsList(ctx)
 		default:
 			handlers.handleChatGPTMessage(ctx, db, openai)
 	}	

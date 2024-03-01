@@ -1,12 +1,10 @@
-import {ActionButtons, Body, Button, Interactive} from 'whatsapp-api-js/messages'
+export default function aiModelsList({sock, messageEvent}) {
+    const message = `Type one of these commands to set a model
 
-export default function aiModelsList(ctx) {
-    const message = new Interactive(
-        new ActionButtons(
-            new Button('changeAIModel#chatgpt4', 'ChatGPT 4'),
-            new Button('changeAIModel#chatgpt3.5turbo', 'ChatGPT 3.5 turbo'),
-        ),
-        new Body('You can assign one of these models')
-    )
-    ctx.reply(message)
+/model chatgpt4
+/model chatgpt3.5`
+    
+    sock.sendMessage(messageEvent.key.remoteJid, {
+        text: message
+    })
 }
