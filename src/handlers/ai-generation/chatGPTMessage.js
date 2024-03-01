@@ -30,9 +30,11 @@ export default async function handleChatGPTMessage({sock, messageEvent}, db, ope
 	const answer = chatCompletion.choices[0].message.content
 	db.messageHistory.append(remoteJid, 'assistant', answer) // in background
 
-    sock.sendMessage(remoteJid, {
-		text: `${answer}
+	const message = `${answer}
 ---
 type /help to get a list of available commands`
+
+    sock.sendMessage(remoteJid, {
+		text: message
 	})
 }
