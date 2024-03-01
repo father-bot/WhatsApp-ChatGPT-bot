@@ -1,6 +1,6 @@
 import {Text} from 'whatsapp-api-js/messages'
 
-export default function changeAIModel(ctx, db) {
+export default function handleChangeAIModel(ctx, db) {
     const msg = ctx.message
     
     const modelID = msg.interactive.button_reply.id

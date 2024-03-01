@@ -7,8 +7,8 @@ import handleGenerateImage from './ai-generation/generateImage.js'
 import handleRegenerateLastBotAnswer from './ai-generation/regenerateLastBotAnswer.js'
 import handleClearMessageHistory from './clearMessageHistory.js'
 import handleTranscribeVoiceMessage from './ai-generation/transcribeVoiceMessage.js'
-import changeAIModel from './ai-models/changeAIModel.js'
-import aiModelsList from './ai-models/aiModelsList.js'
+import handleChangeAIModel from './ai-models/changeAIModel.js'
+import handleAiModelsList from './ai-models/aiModelsList.js'
 
 export default {
 	handleChatGPTMessage,
@@ -20,6 +20,6 @@ export default {
 	handleRegenerateLastBotAnswer,
 	handleClearMessageHistory,
 	handleTranscribeVoiceMessage,
-	changeAIModel,
-	aiModelsList
+	handleChangeAIModel,
+	handleAiModelsList
 }
