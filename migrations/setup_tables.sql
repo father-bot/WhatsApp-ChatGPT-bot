@@ -2,7 +2,7 @@ CREATE TABLE users(
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	phone varchar(15) UNIQUE NOT NULL,
 	personality varchar(35),
-	ai_model varchar(35) DEFAULT 'chatgpt4'
+	ai_model varchar(35) DEFAULT 'gpt-4'
 );
 
 CREATE TABLE message_history(

@@ -22,9 +22,10 @@ export default async function handleChatGPTMessage(ctx, db, openai) {
 		]
 	}
 
+	const model = await db.users.getAIModel(msg.from)
 	const chatCompletion = await openai.chat.completions.create({
 		messages: history,
-		model: 'gpt-4'
+		model
 	})
 
 	const answer = chatCompletion.choices[0].message.content
