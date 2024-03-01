@@ -1,12 +1,11 @@
-import {Text} from 'whatsapp-api-js/messages'
+export default function changeAIModel({sock, messageEvent}, db) {    
+    const modelID = messageEvent.message.conversation
+        .replace('/model ')
 
-export default function changeAIModel(ctx, db) {
-    const msg = ctx.message
-    
-    const modelID = msg.interactive.button_reply.id
-        .split('#')[1]
+    const remoteJid = messageEvent.key.remoteJid
+    db.users.setAIModel(remoteJid, modelID) // in background
 
-    db.users.setAIModel(msg.from, modelID) // in background
-
-    ctx.reply(new Text('You have changed your AI model successfully'))
+    sock.sendMessage(remoteJid, {
+        text: 'You have changed your AI model successfully'
+    })
 }
