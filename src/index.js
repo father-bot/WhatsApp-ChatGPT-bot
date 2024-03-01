@@ -29,7 +29,7 @@ async function processRequest(ctx, db, openai) {
 		case '/roles':
 			return handlers.handlePersonalitiesList(ctx)
 		case '/models':
-			return handlers.aiModelsList(ctx)
+			return handlers.handleAiModelsList(ctx)
 		default:
 			handlers.handleChatGPTMessage(ctx, db, openai)
 	}	

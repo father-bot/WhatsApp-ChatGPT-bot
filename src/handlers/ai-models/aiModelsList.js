@@ -1,4 +1,4 @@
-export default function aiModelsList({sock, messageEvent}) {
+export default function handleAiModelsList({sock, messageEvent}) {
     const message = `Type one of these commands to set a model
 
 /model chatgpt4
