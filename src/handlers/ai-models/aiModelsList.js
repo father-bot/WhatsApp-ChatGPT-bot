@@ -1,8 +1,8 @@
 export default function handleAiModelsList({sock, messageEvent}) {
     const message = `Type one of these commands to set a model
 
-/model chatgpt4
-/model chatgpt3.5`
+/model gpt-4
+/model gpt-3.5-turbo`
     
     sock.sendMessage(messageEvent.key.remoteJid, {
         text: message

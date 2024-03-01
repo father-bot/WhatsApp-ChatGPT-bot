@@ -27,9 +27,10 @@ export default async function handleRegenerateLastBotAnswer({sock, messageEvent}
 		}
 	}
 
+	const model = await db.users.getAIModel(remoteJid)
 	const chatCompletion = await openai.chat.completions.create({
 		messages: history,
-		model: 'gpt-4'
+		model
 	})
 	const answer = chatCompletion.choices[0].message.content
 
