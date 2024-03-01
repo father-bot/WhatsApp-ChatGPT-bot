@@ -6,41 +6,42 @@ export default class UserRepo {
         this.#db = db
     }
 
-    async checkExistence(phone) {
-        const rows = (await this.#db(this.#table).where({phone})).length
+    async checkExistence(whatsappId) {
+        const queryResult = await this.#db(this.#table)
+            .where({whatsapp_id: whatsappId})
 
-        return rows !== 0
+        return queryResult.length !== 0
     }
     
-    async signUp(phone) {
+    async signUp(whatsappId) {
         await this.#db(this.#table).insert([
-            {phone}
+            {whatsapp_id: whatsappId}
         ])
     }
 
-    async setPersonality(phone, personality) {
+    async setPersonality(whatsappId, personality) {
         await this.#db(this.#table)
-            .where({phone})
+            .where({whatsapp_id: whatsappId})
             .update({personality})
     }
 
-    async getPersonality(phone) {
+    async getPersonality(whatsappId) {
         const queryResult = await this.#db(this.#table)
-            .where({phone})
+            .where({whatsapp_id: whatsappId})
             .select('personality')
 
         return queryResult[0].personality
     }
 
-    async setAIModel(phone, model) {
+    async setAIModel(whatsappId, model) {
         await this.#db(this.#table)
-            .where({phone})
+            .where({whatsapp_id: whatsappId})
             .update({ai_model: model})
     }
 
-    async getAIModel(phone) {
+    async getAIModel(whatsappId) {
         const queryResult = await this.#db(this.#table)
-            .where({phone})
+            .where({whatsapp_id: whatsappId})
             .select('ai_model')
 
         return queryResult[0].ai_model

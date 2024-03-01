@@ -6,19 +6,23 @@ export default class MessageHistoryRepo {
 		this.#db = db
 	}
 
-	async append(phone, role, message) {
+	async append(whatsappId, role, message) {
 		await this.#db(this.#table).insert([
-			{phone, role, body: message}
+			{
+				whatsapp_id: whatsappId,
+				role, 
+				body: message
+			}
 		])
 	}
 
-	async clear(phone) {
+	async clear(whatsappId) {
 		await this.#db(this.#table)
-			.where({phone})
+			.where({whatsapp_id: whatsappId})
 			.del()
 	}
 
-	async deleteFirst(phone, messagesCount) {
+	async deleteFirst(whatsappId, messagesCount) {
 		const sql = 'DELETE FROM ? WHERE id IN (SELECT id FROM ? ORDER BY created_at LIMIT ?)'
 
 		await this.#db.raw(sql, [
@@ -28,8 +32,8 @@ export default class MessageHistoryRepo {
 		])
 	}
 
-	getMessages(phone) {
+	getMessages(whatsappId) {
 		 return this.#db(this.#table)
-			.where({phone})
+			.where({whatsapp_id: whatsappId})
 	}
 }
