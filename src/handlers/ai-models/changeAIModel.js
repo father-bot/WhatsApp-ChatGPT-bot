@@ -1,4 +1,4 @@
-export default function changeAIModel({sock, messageEvent}, db) {    
+export default function handleChangeAIModel({sock, messageEvent}, db) {    
     const modelID = messageEvent.message.conversation
         .replace('/model ')
 

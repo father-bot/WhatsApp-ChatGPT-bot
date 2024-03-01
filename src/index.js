@@ -17,7 +17,7 @@ async function processRequest(ctx, db, openai) {
 	if (text.includes('/role ')) 
 		return handlers.handleChangePersonality(ctx, db)
 	if (text.includes('/model '))
-		return handlers.changeAIModel(ctx, db)
+		return handlers.handleChangeAIModel(ctx, db)
 	if (text.includes('/image'))
 		return handlers.handleGenerateImage(ctx, openai)
 
