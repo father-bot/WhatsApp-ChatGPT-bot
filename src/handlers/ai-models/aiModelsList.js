@@ -1,6 +1,6 @@
 import {ActionButtons, Body, Button, Interactive} from 'whatsapp-api-js/messages'
 
-export default function handleAiModelsList(ctx) {
+export default function handleAIModelsList(ctx) {
     const message = new Interactive(
         new ActionButtons(
             new Button('changeAIModel#gpt-4', 'ChatGPT 4'),

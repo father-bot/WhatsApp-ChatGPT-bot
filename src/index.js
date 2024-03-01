@@ -32,7 +32,7 @@ async function processRequest(ctx, db, openai) {
 			if (buttonReplyId === 'regenerateLastBotAnswer')
 				handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
 			if (buttonReplyId === 'aiModelsList')
-				handlers.handleAiModelsList(ctx)
+				handlers.handleAIModelsList(ctx)
 			if (buttonReplyId.includes('changeAIModel'))
 				handlers.handleChangeAIModel(ctx, db)
 			if (buttonListId.includes('changePersonality'))
