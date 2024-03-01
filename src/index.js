@@ -16,6 +16,8 @@ async function processRequest(ctx, db, openai) {
 
 	if (text.includes('/role ')) 
 		return handlers.handleChangePersonality(ctx, db)
+	if (text.includes('/image'))
+		return handlers.handleGenerateImage(ctx, openai)
 
 	switch(text) {
 		case '/help':

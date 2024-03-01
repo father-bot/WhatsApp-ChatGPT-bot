@@ -1,14 +1,15 @@
-import {Image, Text} from 'whatsapp-api-js/messages'
-
-export default async function handleGenerateImage(ctx, openai) {
-	const prompt = ctx.message.text.body
+export default async function handleGenerateImage({sock, messageEvent}, openai) {
+	const prompt = messageEvent.message.conversation
 		.replace('/image', '')
+	const remoteJid = messageEvent.key.remoteJid
 
 	if (!prompt) {
 		const helpMessage = `you need to pass a prompt to generate an image
 follow this format: /image $prompt
 example: /image sunrise low dim sun a new winter day`
-		return ctx.reply(new Text(helpMessage))
+		return sockSendMessage(remoteJid, {
+			text: helpMessage
+		})
 	}
 
 	const res = await openai.images.generate({
@@ -21,10 +22,8 @@ example: /image sunrise low dim sun a new winter day`
 
 	const imageObj = res.data[0]
 
-	const message = new Image(
-		imageObj.url,
-		false,
-		imageObj.revised_prompt
-	)
-	ctx.reply(message)
+	sock.sendMessage(remoteJid, {
+		image: imageObj.url,
+		caption: imageObj.revised_prompt
+	})
 }
