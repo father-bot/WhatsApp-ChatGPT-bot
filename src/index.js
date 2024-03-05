@@ -12,6 +12,9 @@ async function processRequest(ctx, db, openai) {
         await db.users.signUp(messageEvent.key.remoteJid)
     }
 
+	if (messageEvent.message.audioMessage)
+		return handlers.handleTranscribeVoiceMessage(ctx, openai)
+
 	const text = messageEvent.message.conversation
 
 	if (text.includes('/role ')) 
