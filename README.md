@@ -1,5 +1,10 @@
 # WhatsApp ChatGPT bot
 
+If you're looking for unofficial API whatsapp bot switch to the
+baileys branch
+
+[CLICK HERE TO SWITCH](https://github.com/father-bot/WhatsApp-ChatGPT-bot/tree/baileys) or do it manually
+
 ## Deploy 🚀
 
 1. Create an application on Meta Developers for WhatsApp use, copy app secret and issue a whatsapp access token
