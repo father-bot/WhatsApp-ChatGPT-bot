@@ -1,6 +1,6 @@
 export default function handleChangeAIModel({sock, messageEvent}, db) {    
     const modelID = messageEvent.message.conversation
-        .replace('/model ')
+        .replace('/model ', '')
 
     const remoteJid = messageEvent.key.remoteJid
     db.users.setAIModel(remoteJid, modelID) // in background
