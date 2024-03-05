@@ -7,36 +7,33 @@ import handlers from './handlers/index.js'
 async function processRequest(ctx, db, openai) {
 	const {messageEvent} = ctx
     if (messageEvent.key.fromMe) return
-	
+
 	if (!await db.users.checkExistence(messageEvent.key.remoteJid)) {
         await db.users.signUp(messageEvent.key.remoteJid)
     }
 
-	if (messageEvent.message.audioMessage)
-		return handlers.handleTranscribeVoiceMessage(ctx, openai)
+	const messageType = Object.keys(messageEvent.message)[0]
 
-	const text = messageEvent.message.conversation
+	switch(messageType) {
+		case 'message':
+			const text = messageEvent.message.conversation
 
-	if (text.includes('/role ')) 
-		return handlers.handleChangePersonality(ctx, db)
-	if (text.includes('/model '))
-		return handlers.handleChangeAIModel(ctx, db)
-	if (text.includes('/image'))
-		return handlers.handleGenerateImage(ctx, openai)
+			if (text.includes('/role ')) 
+				return handlers.handleChangePersonality(ctx, db)
+			if (text.includes('/model '))
+				return handlers.handleChangeAIModel(ctx, db)
+			if (text.includes('/image'))
+				return handlers.handleGenerateImage(ctx, openai)
+			
+			if (text === '/help')   handlers.handleHelp(ctx)
+			if (text === '/clear')  handlers.handleClearMessageHistory(ctx, db)
+			if (text === '/retry')  handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
+			if (text === '/roles')  handlers.handlePersonalitiesList(ctx)
+			if (text === '/models') handlers.handleAIModelsList(ctx)
 
-	switch(text) {
-		case '/help':
-			return handlers.handleHelp(ctx)
-		case '/clear':
-			return handlers.handleClearMessageHistory(ctx, db)
-		case '/retry':
-			return handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
-		case '/roles':
-			return handlers.handlePersonalitiesList(ctx)
-		case '/models':
-			return handlers.handleAIModelsList(ctx)
-		default:
-			handlers.handleChatGPTMessage(ctx, db, openai)
+			break
+		case 'audioMessage':
+			handlers.handleTranscribeVoiceMessage(ctx, openai)
 	}	
 }
 
