@@ -23,7 +23,7 @@ example: /image sunrise low dim sun a new winter day`
 	const imageObj = res.data[0]
 
 	sock.sendMessage(remoteJid, {
-		image: imageObj.url,
+		image: {url: imageObj.url},
 		caption: imageObj.revised_prompt
 	})
 }
