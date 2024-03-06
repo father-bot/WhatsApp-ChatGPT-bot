@@ -15,7 +15,7 @@ async function processRequest(ctx, db, openai) {
 	const messageType = Object.keys(messageEvent.message)[0]
 
 	switch(messageType) {
-		case 'message':
+		case 'conversation':
 			const text = messageEvent.message.conversation
 
 			if (text.includes('/role ')) 
