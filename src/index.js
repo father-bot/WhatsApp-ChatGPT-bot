@@ -25,11 +25,12 @@ async function processRequest(ctx, db, openai) {
 			if (text.includes('/image'))
 				return handlers.handleGenerateImage(ctx, openai)
 			
-			if (text === '/help')   handlers.handleHelp(ctx)
-			if (text === '/clear')  handlers.handleClearMessageHistory(ctx, db)
-			if (text === '/retry')  handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
-			if (text === '/roles')  handlers.handlePersonalitiesList(ctx)
-			if (text === '/models') handlers.handleAIModelsList(ctx)
+			if (text === '/help')        handlers.handleHelp(ctx)
+			else if (text === '/clear')  handlers.handleClearMessageHistory(ctx, db)
+			else if (text === '/retry')  handlers.handleRegenerateLastBotAnswer(ctx, db, openai)
+			else if (text === '/roles')  handlers.handlePersonalitiesList(ctx)
+			else if (text === '/models') handlers.handleAIModelsList(ctx)
+			else                         handlers.handleChatGPTMessage(ctx, db, openai)
 
 			break
 		case 'audioMessage':
